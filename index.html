@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EduSimplify — Powered by IBM Bob</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ibm-blue:       #0f62fe;
+      --ibm-blue-hover: #0050e6;
+      --ibm-blue-10:    #edf5ff;
+      --ibm-blue-20:    #d0e2ff;
+      --ibm-blue-60:    #0043ce;
+      --ibm-blue-80:    #002d9c;
+      --ibm-cyan:       #1192e8;
+      --ibm-teal:       #009d9a;
+      --ibm-purple:     #8a3ffc;
+      --ibm-red:        #da1e28;
+      --ibm-orange:     #f1c21b;
+      --ibm-green:      #198038;
+      --ibm-green-40:   #42be65;
+
+      --bg:       #161616;
+      --bg-2:     #262626;
+      --bg-3:     #393939;
+      --bg-4:     #525252;
+      --border:   #393939;
+      --border-2: #525252;
+      --text:     #f4f4f4;
+      --text-2:   #c6c6c6;
+      --text-3:   #a8a8a8;
+      --text-4:   #6f6f6f;
+
+      --surface:  #1c1c1c;
+      --surface-2:#262626;
+      --surface-3:#2d2d2d;
+
+      --radius:   0px;
+      --radius-sm: 0px;
+      --font: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+      --shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── TOP PROGRESS BAR ── */
+    #topBar {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 3px; z-index: 9999;
+      background: transparent;
+    }
+    #topBar.active {
+      background: linear-gradient(90deg, var(--ibm-blue), var(--ibm-cyan), var(--ibm-purple));
+      background-size: 200% 100%;
+      animation: shimmer 1.4s linear infinite;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    /* ── HEADER ── */
+    header {
+      background: #000;
+      border-bottom: 1px solid #393939;
+      padding: 0 48px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .ibm-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-right: 1px solid #393939;
+      padding-right: 16px;
+      margin-right: 16px;
+    }
+    .ibm-logo svg { width: 40px; height: 16px; }
+    .bob-badge {
+      background: var(--ibm-blue);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .header-title {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text);
+      letter-spacing: -0.2px;
+    }
+    .header-title strong { font-weight: 600; color: #fff; }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-tag {
+      font-size: 11px;
+      color: var(--text-3);
+      border: 1px solid var(--border-2);
+      padding: 3px 10px;
+      font-family: var(--font-mono);
+    }
+
+    /* ── HERO BANNER ── */
+    .hero {
+      background: linear-gradient(135deg, #0a0a0a 0%, #0d1a2d 50%, #0a0a0a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 48px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(15,98,254,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: 30%;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(138,63,252,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--ibm-cyan);
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+    }
+    .hero h1 {
+      font-size: 36px;
+      font-weight: 300;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+    .hero h1 strong { font-weight: 600; }
+    .hero-sub {
+      font-size: 15px;
+      color: var(--text-3);
+      max-width: 560px;
+      line-height: 1.6;
+    }
+    .hero-badges {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .hero-badge {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-3);
+      border: 1px solid var(--border-2);
+      padding: 4px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--ibm-green-40);
+    }
+
+    /* ── API KEY BANNER ── */
+    #apiKeyBanner {
+      background: rgba(15,98,254,0.08);
+      border-bottom: 1px solid rgba(15,98,254,0.3);
+      padding: 12px 48px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+    #apiKeyBanner.hidden { display: none; }
+    .api-key-icon { color: var(--ibm-cyan); font-size: 16px; }
+    .api-key-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+    #apiKeyField {
+      background: var(--bg-2);
+      border: 1px solid var(--border-2);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 6px 12px;
+      width: 320px;
+      outline: none;
+    }
+    #apiKeyField:focus { border-color: var(--ibm-blue); }
+    .btn-sm {
+      background: var(--ibm-blue);
+      color: #fff;
+      border: none;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background 0.15s;
+    }
+    .btn-sm:hover { background: var(--ibm-blue-hover); }
+    .btn-sm.ghost {
+      background: transparent;
+      border: 1px solid var(--border-2);
+      color: var(--text-2);
+    }
+    .btn-sm.ghost:hover { background: var(--bg-3); }
+
+    /* ── MAIN LAYOUT ── */
+    .workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      min-height: calc(100vh - 56px - 80px);
+    }
+    @media (max-width: 900px) {
+      .workspace { grid-template-columns: 1fr; }
+      header { padding: 0 20px; }
+      .hero { padding: 28px 20px; }
+      #apiKeyBanner { padding: 12px 20px; flex-wrap: wrap; }
+      #apiKeyField { width: 200px; }
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .sidebar-section {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+    .sidebar-section:last-child { border-bottom: none; margin-bottom: 0; }
+
+    .field-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      font-family: var(--font-mono);
+    }
+    .field-hint {
+      font-size: 11px;
+      color: var(--text-4);
+      margin-bottom: 8px;
+    }
+
+    select, input[type="text"], textarea {
+      width: 100%;
+      background: var(--bg-2);
+      border: 1px solid var(--border-2);
+      border-bottom: 2px solid var(--border-2);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    select:focus, input[type="text"]:focus, textarea:focus {
+      border-bottom-color: var(--ibm-blue);
+    }
+    select { 
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23a8a8a8' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+    select option { background: #262626; }
+    textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
+
+    .char-counter {
+      font-size: 11px;
+      color: var(--text-4);
+      text-align: right;
+      margin-top: 4px;
+      font-family: var(--font-mono);
+    }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group:last-child { margin-bottom: 0; }
+
+    /* ── PRIMARY BUTTON ── */
+    .btn-primary {
+      width: 100%;
+      background: var(--ibm-blue);
+      color: #fff;
+      border: none;
+      padding: 14px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--font);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background 0.15s;
+    }
+    .btn-primary:hover:not(:disabled)::after { background: rgba(255,255,255,0.05); }
+    .btn-primary:disabled { background: var(--bg-4); cursor: not-allowed; color: var(--text-4); }
+    .btn-icon { font-size: 16px; }
+
+    .spinner-ring {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── ERROR / NOTICE ── */
+    .inline-notice {
+      padding: 10px 14px;
+      font-size: 12px;
+      margin-top: 10px;
+      border-left: 3px solid;
+      display: none;
+      line-height: 1.5;
+    }
+    .inline-notice.error   { background: rgba(218,30,40,0.1); border-color: var(--ibm-red); color: #ff8389; }
+    .inline-notice.info    { background: rgba(15,98,254,0.1); border-color: var(--ibm-blue); color: #78a9ff; }
+    .inline-notice.visible { display: block; }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+    .stat-cell {
+      background: var(--surface-2);
+      padding: 12px 14px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ibm-cyan);
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 10px;
+      color: var(--text-4);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 3px;
+    }
+
+    /* ── OUTPUT AREA ── */
+    .output-area {
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── EMPTY STATE ── */
+    #emptyState {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 60px 40px;
+      text-align: center;
+      color: var(--text-4);
+    }
+    .empty-icon {
+      width: 80px; height: 80px;
+      border: 2px solid var(--border-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: var(--border-2);
+    }
+    #emptyState h3 { font-size: 18px; font-weight: 300; color: var(--text-3); }
+    #emptyState p  { font-size: 13px; max-width: 340px; line-height: 1.6; }
+
+    /* ── OUTPUT TABS ── */
+    .output-tabs {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      display: none;
+    }
+    .output-tab {
+      font-size: 13px;
+      color: var(--text-3);
+      padding: 14px 16px 12px;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .output-tab.active {
+      color: var(--ibm-cyan);
+      border-bottom-color: var(--ibm-cyan);
+    }
+    .output-tab:hover:not(.active) { color: var(--text); }
+    .tab-sep { flex: 1; }
+    .copy-all-btn {
+      font-size: 12px;
+      color: var(--text-3);
+      background: none;
+      border: 1px solid var(--border-2);
+      padding: 5px 12px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background 0.15s;
+    }
+    .copy-all-btn:hover { background: var(--bg-3); color: var(--text); }
+
+    /* ── RESULTS CONTAINER ── */
+    #resultsContainer {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    /* ── SECTION CARDS ── */
+    .sections-grid {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sec-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .sec-card + .sec-card { border-top: none; }
+
+    .sec-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.1s;
+    }
+    .sec-header:hover { background: var(--surface-2); }
+
+    .sec-icon-wrap {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .sec-title {
+      font-size: 13px;
+      font-weight: 600;
+      flex: 1;
+      letter-spacing: 0.3px;
+    }
+    .sec-count {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-4);
+      background: var(--bg-3);
+      padding: 2px 8px;
+    }
+    .sec-copy {
+      background: none;
+      border: none;
+      color: var(--text-4);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 4px 8px;
+      transition: color 0.15s;
+      display: none;
+      font-family: var(--font);
+    }
+    .sec-card:hover .sec-copy { display: block; }
+    .sec-copy:hover { color: var(--ibm-cyan); }
+    .sec-chevron {
+      font-size: 10px;
+      color: var(--text-4);
+      transition: transform 0.25s;
+      flex-shrink: 0;
+    }
+    .sec-card.collapsed .sec-chevron { transform: rotate(-90deg); }
+
+    .sec-body {
+      border-top: 1px solid var(--border);
+      padding: 20px 18px;
+      font-size: 14px;
+      line-height: 1.8;
+      overflow: hidden;
+      max-height: 4000px;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    .sec-card.collapsed .sec-body {
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      border-top-color: transparent;
+    }
+
+    /* accent strips */
+    .acc-blue   .sec-header { border-left: 3px solid #78a9ff; }
+    .acc-cyan   .sec-header { border-left: 3px solid var(--ibm-cyan); }
+    .acc-teal   .sec-header { border-left: 3px solid var(--ibm-teal); }
+    .acc-green  .sec-header { border-left: 3px solid var(--ibm-green-40); }
+    .acc-purple .sec-header { border-left: 3px solid var(--ibm-purple); }
+    .acc-orange .sec-header { border-left: 3px solid var(--ibm-orange); }
+    .acc-red    .sec-header { border-left: 3px solid var(--ibm-red); }
+    .acc-indigo .sec-header { border-left: 3px solid #be95ff; }
+    .acc-pink   .sec-header { border-left: 3px solid #ff7eb6; }
+
+    /* ── SIMPLIFIED EXPLANATION ── */
+    .explanation-text {
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--text);
+    }
+
+    /* ── CHIPS LIST ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      background: var(--bg-3);
+      border: 1px solid var(--border-2);
+      color: var(--text-2);
+      font-size: 12px;
+      padding: 5px 12px;
+      font-family: var(--font-mono);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .chip::before { content: '→'; color: var(--ibm-cyan); font-size: 11px; }
+
+    /* ── TERMS TABLE ── */
+    .terms-table { width: 100%; border-collapse: collapse; }
+    .terms-table th {
+      background: var(--bg-2);
+      color: var(--text-3);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 8px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .terms-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      vertical-align: top;
+    }
+    .terms-table tr:last-child td { border-bottom: none; }
+    .terms-table tr:hover td { background: var(--surface-2); }
+    .term-name-cell { font-weight: 600; color: var(--ibm-cyan); font-family: var(--font-mono); white-space: nowrap; }
+    .term-def-cell  { color: var(--text-2); line-height: 1.6; }
+
+    /* ── ANALOGY ── */
+    .analogy-block {
+      background: var(--bg-2);
+      border-left: 3px solid var(--ibm-orange);
+      padding: 16px 20px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text-2);
+      font-style: italic;
+      position: relative;
+    }
+    .analogy-block::before {
+      content: '"';
+      position: absolute;
+      top: 4px; left: 12px;
+      font-size: 36px;
+      color: var(--ibm-orange);
+      opacity: 0.3;
+      font-style: normal;
+      line-height: 1;
+    }
+
+    /* ── STEPS ── */
+    .steps-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+    .step-item {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .step-num {
+      background: var(--ibm-blue);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      min-width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-text { font-size: 13px; line-height: 1.7; color: var(--text-2); }
+
+    /* ── EXAMPLE / CODE ── */
+    .example-block {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      padding: 18px 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.8;
+      color: #e6edf3;
+      white-space: pre-wrap;
+      word-break: break-word;
+      position: relative;
+    }
+    .example-lang {
+      position: absolute; top: 8px; right: 12px;
+      font-size: 10px; color: var(--text-4);
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+
+    /* ── MISTAKES ── */
+    .mistake-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .mistake-row:last-child { border-bottom: none; }
+    .mistake-x {
+      color: var(--ibm-red);
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .mistake-text { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+
+    /* ── EXAM SUMMARY ── */
+    .exam-block {
+      background: linear-gradient(135deg, rgba(15,98,254,0.06) 0%, rgba(138,63,252,0.04) 100%);
+      border: 1px solid rgba(15,98,254,0.25);
+      padding: 20px 22px;
+      font-size: 14.5px;
+      line-height: 1.9;
+      color: var(--text);
+    }
+
+    /* ── PRACTICE QUESTIONS ── */
+    .q-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      margin-bottom: 2px;
+    }
+    .q-card:last-child { margin-bottom: 0; }
+    .q-top {
+      padding: 14px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .q-num-badge {
+      background: var(--bg-3);
+      border: 1px solid var(--border-2);
+      color: var(--text-3);
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      padding: 2px 8px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .q-text { font-size: 14px; line-height: 1.7; font-weight: 400; color: var(--text); }
+    .q-meta {
+      padding: 0 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .diff-pill {
+      font-size: 10px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      padding: 2px 10px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .diff-Easy   { background: rgba(25,128,56,0.15);  color: var(--ibm-green-40); border: 1px solid rgba(25,128,56,0.3); }
+    .diff-Medium { background: rgba(241,194,27,0.12); color: var(--ibm-orange);   border: 1px solid rgba(241,194,27,0.3); }
+    .diff-Hard   { background: rgba(218,30,40,0.12);  color: #ff8389;             border: 1px solid rgba(218,30,40,0.3); }
+
+    .reveal-btn {
+      background: none;
+      border: 1px solid var(--border-2);
+      color: var(--text-3);
+      font-size: 12px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all 0.15s;
+      margin-left: auto;
+    }
+    .reveal-btn:hover { background: var(--bg-3); color: var(--text); border-color: var(--ibm-blue); }
+
+    .q-answer {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 14px 16px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-2);
+      background: rgba(15,98,254,0.04);
+    }
+    .q-answer.visible { display: block; }
+    .answer-label {
+      font-size: 10px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--ibm-green-40);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+
+    /* ── SKELETON LOADING ── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-2) 25%, var(--bg-3) 50%, var(--bg-2) 75%);
+      background-size: 400% 100%;
+      animation: skeleton-wave 1.4s ease infinite;
+    }
+    @keyframes skeleton-wave {
+      0%   { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+    .sk-line {
+      height: 14px;
+      margin-bottom: 8px;
+      border-radius: 0;
+    }
+    .sk-line.short  { width: 40%; }
+    .sk-line.medium { width: 70%; }
+    .sk-line.long   { width: 95%; }
+
+    #skeletonLoader {
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      padding: 24px;
+    }
+    .sk-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 16px 18px;
+    }
+    .sk-header {
+      height: 16px;
+      width: 35%;
+      margin-bottom: 14px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #000;
+      border-top: 1px solid #393939;
+      padding: 16px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-4);
+    }
+    footer a { color: var(--text-4); text-decoration: none; }
+    footer a:hover { color: var(--text-3); }
+    .footer-ibm { display: flex; align-items: center; gap: 8px; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface-3);
+      border: 1px solid var(--border-2);
+      border-left: 3px solid var(--ibm-green-40);
+      color: var(--text);
+      padding: 12px 18px;
+      font-size: 13px;
+      z-index: 9999;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      max-width: 300px;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--bg-4); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--bg-3); }
+  </style>
+</head>
+<body>
+
+<div id="topBar"></div>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-left">
+    <div class="ibm-logo">
+      <!-- IBM Logo SVG (official 8-bar) -->
+      <svg viewBox="0 0 56 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0"  y="0"  width="8"  height="3" fill="#fff"/>
+        <rect x="0"  y="5"  width="8"  height="3" fill="#fff"/>
+        <rect x="0"  y="10" width="8"  height="3" fill="#fff"/>
+        <rect x="0"  y="15" width="8"  height="3" fill="#fff"/>
+        <rect x="0"  y="19" width="8"  height="3" fill="#fff"/>
+        <rect x="10" y="0"  width="10" height="3" fill="#fff"/>
+        <rect x="10" y="5"  width="10" height="3" fill="#fff"/>
+        <rect x="13" y="10" width="7"  height="3" fill="#fff"/>
+        <rect x="10" y="15" width="10" height="3" fill="#fff"/>
+        <rect x="10" y="19" width="10" height="3" fill="#fff"/>
+        <rect x="22" y="0"  width="12" height="3" fill="#fff"/>
+        <rect x="22" y="5"  width="8"  height="3" fill="#fff"/>
+        <rect x="22" y="10" width="8"  height="3" fill="#fff"/>
+        <rect x="22" y="15" width="8"  height="3" fill="#fff"/>
+        <rect x="22" y="19" width="12" height="3" fill="#fff"/>
+        <rect x="36" y="0"  width="8"  height="3" fill="#1192e8"/>
+        <rect x="36" y="5"  width="8"  height="3" fill="#1192e8"/>
+        <rect x="36" y="10" width="8"  height="3" fill="#1192e8"/>
+        <rect x="36" y="15" width="8"  height="3" fill="#1192e8"/>
+        <rect x="36" y="19" width="8"  height="3" fill="#1192e8"/>
+        <rect x="46" y="0"  width="10" height="3" fill="#1192e8"/>
+        <rect x="46" y="5"  width="10" height="3" fill="#1192e8"/>
+        <rect x="46" y="10" width="10" height="3" fill="#1192e8"/>
+        <rect x="46" y="15" width="10" height="3" fill="#1192e8"/>
+        <rect x="46" y="19" width="10" height="3" fill="#1192e8"/>
+      </svg>
+      <span class="bob-badge">Bob</span>
+    </div>
+    <div>
+      <div class="header-title"><strong>EduSimplify</strong> AI</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="header-tag">IBM Bob AI</span>
+    <button class="btn-sm ghost" onclick="toggleApiPanel()">⚙ API Key</button>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-eyebrow">IBM Bob × Adaptive Learning</div>
+  <h1><strong>Simplify</strong> Any Academic Content<br>at Your Exact Level</h1>
+  <p class="hero-sub">Paste textbook excerpts, lecture notes, or research papers. Get a structured breakdown tailored to your proficiency — from beginner to expert.</p>
+  <div class="hero-badges">
+    <span class="hero-badge"><span class="dot"></span>9 Structured Sections</span>
+    <span class="hero-badge"><span class="dot"></span>5 Practice Questions</span>
+    <span class="hero-badge"><span class="dot"></span>All Levels Supported</span>
+    <span class="hero-badge"><span class="dot"></span>No Server Required</span>
+  </div>
+</div>
+
+<!-- ── API KEY BANNER ── -->
+<div id="apiKeyBanner">
+  <span class="api-key-icon">🔑</span>
+  <span style="color:var(--text-2)">Enter your <strong style="color:#fff">IBM watsonx API key</strong> to get started. It stays in your browser session only.</span>
+  <div class="api-key-input-wrap">
+    <input type="password" id="apiKeyField" placeholder="IBM Cloud API key…" />
+    <button class="btn-sm" onclick="saveApiKey()">Save Key</button>
+  </div>
+</div>
+
+<!-- ── WORKSPACE ── -->
+<div class="workspace">
+
+  <!-- ── SIDEBAR ── -->
+  <div class="sidebar">
+
+    <div class="sidebar-section">
+      <div class="field-label">Proficiency Level</div>
+      <div class="field-hint">How familiar are you with this subject?</div>
+      <div class="form-group">
+        <select id="student_level">
+          <option value="">Select level…</option>
+          <option value="Beginner">🟢 Beginner — Little to no prior knowledge</option>
+          <option value="Intermediate">🟡 Intermediate — Basic understanding</option>
+          <option value="Advanced">🟠 Advanced — Strong foundational knowledge</option>
+          <option value="Expert">🔴 Expert — Deep domain expertise</option>
+        </select>
+      </div>
+
+      <div class="field-label">Learning Goal</div>
+      <div class="field-hint">What do you want to achieve?</div>
+      <div class="form-group">
+        <select id="learning_goal">
+          <option value="">Select goal…</option>
+          <option value="Understand">💡 Understand — Build intuition</option>
+          <option value="Revise">🔁 Revise — Quick refresh</option>
+          <option value="Prepare for examination">🎯 Exam Preparation</option>
+          <option value="Apply the concept">⚙ Apply the Concept</option>
+          <option value="Deep technical understanding">🔬 Deep Technical Understanding</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="field-label">Subject</div>
+      <div class="form-group">
+        <input type="text" id="subject" placeholder="e.g. Computer Science, Physics…" />
+      </div>
+
+      <div class="field-label">Topic</div>
+      <div class="form-group">
+        <input type="text" id="topic" placeholder="e.g. Binary Trees, Quantum Mechanics…" />
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="field-label">Academic Content</div>
+      <div class="field-hint">Paste your textbook excerpt, lecture notes, or any content to simplify.</div>
+      <div class="form-group">
+        <textarea id="content" placeholder="Paste content here…"></textarea>
+        <div class="char-counter"><span id="charCount">0</span> chars</div>
+      </div>
+    </div>
+
+    <div class="inline-notice error" id="errorMsg"></div>
+
+    <button class="btn-primary" id="simplifyBtn" onclick="handleSimplify()">
+      <span class="btn-icon" id="btnIcon">✦</span>
+      <span id="btnText">Generate with IBM Bob AI</span>
+      <div class="spinner-ring" id="spinner"></div>
+    </button>
+
+    <div id="statsRow" style="display:none; margin-top:16px;">
+      <div class="stats-row">
+        <div class="stat-cell">
+          <div class="stat-num" id="statSections">9</div>
+          <div class="stat-label">Sections</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num" id="statTerms">0</div>
+          <div class="stat-label">Terms</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num" id="statWords">0</div>
+          <div class="stat-label">Words</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── OUTPUT ── -->
+  <div class="output-area">
+
+    <!-- Empty state -->
+    <div id="emptyState">
+      <div class="empty-icon">✦</div>
+      <h3>No content generated yet</h3>
+      <p>Configure your learning parameters on the left and paste your academic content to get started.</p>
+    </div>
+
+    <!-- Skeleton loader -->
+    <div id="skeletonLoader">
+      <div class="sk-card">
+        <div class="sk-line sk-header skeleton"></div>
+        <div class="sk-line long skeleton"></div>
+        <div class="sk-line medium skeleton"></div>
+        <div class="sk-line short skeleton"></div>
+      </div>
+      <div class="sk-card">
+        <div class="sk-line sk-header skeleton"></div>
+        <div class="sk-line long skeleton"></div>
+        <div class="sk-line medium skeleton"></div>
+      </div>
+      <div class="sk-card">
+        <div class="sk-line sk-header skeleton"></div>
+        <div class="sk-line long skeleton"></div>
+        <div class="sk-line long skeleton"></div>
+        <div class="sk-line medium skeleton"></div>
+        <div class="sk-line short skeleton"></div>
+      </div>
+      <div class="sk-card">
+        <div class="sk-line sk-header skeleton"></div>
+        <div class="sk-line medium skeleton"></div>
+      </div>
+    </div>
+
+    <!-- Output tabs + results -->
+    <div id="outputTabs" class="output-tabs">
+      <div class="output-tab active" onclick="switchTab('all')">All Sections</div>
+      <div class="output-tab" onclick="switchTab('core')">Core</div>
+      <div class="output-tab" onclick="switchTab('practice')">Practice</div>
+      <div class="tab-sep"></div>
+      <button class="copy-all-btn" onclick="copyAll()">⎘ Copy All</button>
+    </div>
+
+    <div id="resultsContainer">
+      <div class="sections-grid" id="sectionsGrid"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-ibm">
+    <span>Powered by</span>
+    <strong style="color:#fff">IBM Bob</strong>
+    <span>— Adaptive Learning AI</span>
+  </div>
+  <span>Your API key is stored only in this browser session — never transmitted to any server.</span>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+// ── API KEY MANAGEMENT ──
+let BOB_API_KEY = sessionStorage.getItem('edu_bob_key') || '';
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (BOB_API_KEY) {
+    document.getElementById('apiKeyBanner').classList.add('hidden');
+    document.getElementById('apiKeyField').value = BOB_API_KEY;
+  }
+  document.getElementById('content').addEventListener('input', function() {
+    document.getElementById('charCount').textContent = this.value.length.toLocaleString();
+  });
+});
+
+function toggleApiPanel() {
+  const banner = document.getElementById('apiKeyBanner');
+  banner.classList.toggle('hidden');
+}
+
+function saveApiKey() {
+  const val = document.getElementById('apiKeyField').value.trim();
+  if (!val) { showToast('Please enter an API key.', 'error'); return; }
+  BOB_API_KEY = val;
+  sessionStorage.setItem('edu_bob_key', val);
+  document.getElementById('apiKeyBanner').classList.add('hidden');
+  showToast('API key saved for this session ✓');
+}
+
+// ── UI HELPERS ──
+function setLoading(on) {
+  const btn = document.getElementById('simplifyBtn');
+  const spinner = document.getElementById('spinner');
+  const icon = document.getElementById('btnIcon');
+  const txt = document.getElementById('btnText');
+  const bar = document.getElementById('topBar');
+  btn.disabled = on;
+  spinner.style.display = on ? 'block' : 'none';
+  icon.style.display = on ? 'none' : 'inline';
+  txt.textContent = on ? 'Generating…' : 'Generate with IBM Bob AI';
+  bar.className = on ? 'active' : '';
+
+  const skeleton = document.getElementById('skeletonLoader');
+  const results  = document.getElementById('resultsContainer');
+  const empty    = document.getElementById('emptyState');
+  const tabs     = document.getElementById('outputTabs');
+  if (on) {
+    empty.style.display = 'none';
+    skeleton.style.display = 'flex';
+    results.style.display = 'none';
+    tabs.style.display = 'none';
+  } else {
+    skeleton.style.display = 'none';
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+function clearError() {
+  document.getElementById('errorMsg').classList.remove('visible');
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderLeftColor = type === 'error' ? 'var(--ibm-red)' : 'var(--ibm-green-40)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/\n/g,'<br>');
+}
+
+// ── TABS ──
+let currentTab = 'all';
+const TAB_SECTIONS = {
+  all:      [0,1,2,3,4,5,6,7,8],
+  core:     [0,1,2,3,4,5],
+  practice: [6,7,8]
+};
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.output-tab').forEach((el,i) => {
+    el.classList.toggle('active', ['all','core','practice'][i] === tab);
+  });
+  const cards = document.querySelectorAll('.sec-card');
+  const vis = TAB_SECTIONS[tab];
+  cards.forEach((c,i) => {
+    c.style.display = vis.includes(i) ? 'block' : 'none';
+  });
+}
+
+// ── SECTION TOGGLE ──
+function toggleSec(card) {
+  card.classList.toggle('collapsed');
+}
+
+// ── COPY SECTION ──
+function copySec(btn, text) {
+  event.stopPropagation();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = '⎘ Copy', 1500);
+  });
+}
+
+// ── COPY ALL ──
+let lastResult = null;
+function copyAll() {
+  if (!lastResult) return;
+  const d = lastResult;
+  const parts = [
+    '# Simplified Explanation\n' + d.simplified_explanation,
+    '\n# Key Concepts\n' + (d.key_concepts||[]).map(c=>'- '+c).join('\n'),
+    '\n# Important Terms\n' + (d.important_terms||[]).map(t=>t.term+': '+t.definition).join('\n'),
+    '\n# Real-World Analogy\n' + d.real_world_analogy,
+    '\n# Step-by-Step\n' + (d.step_by_step||[]).map((s,i)=>(i+1)+'. '+s).join('\n'),
+    '\n# Example\n' + d.example,
+    '\n# Common Mistakes\n' + (d.common_mistakes||[]).map(m=>'- '+m).join('\n'),
+    '\n# Exam-Ready Summary\n' + d.exam_ready_summary,
+    '\n# Practice Questions\n' + (d.practice_questions||[]).map((q,i)=>`Q${i+1}: ${q.question}\nDifficulty: ${q.difficulty}\nAnswer: ${q.answer}`).join('\n\n')
+  ];
+  navigator.clipboard.writeText(parts.join('\n')).then(() => showToast('All content copied to clipboard ✓'));
+}
+
+// ── REVEAL ANSWER ──
+function revealAnswer(btn) {
+  const box = btn.closest('.q-meta').nextElementSibling;
+  const visible = box.classList.toggle('visible');
+  btn.textContent = visible ? '▲ Hide' : '▼ Answer';
+}
+
+// ── RENDER OUTPUT ──
+function renderOutput(data) {
+  lastResult = data;
+  const grid = document.getElementById('sectionsGrid');
+
+  const termCount = (data.important_terms||[]).length;
+  const wordCount = Math.round((
+    (data.simplified_explanation||'').split(/\s+/).length +
+    (data.exam_ready_summary||'').split(/\s+/).length +
+    (data.example||'').split(/\s+/).length
+  ));
+  document.getElementById('statTerms').textContent = termCount;
+  document.getElementById('statWords').textContent = wordCount;
+  document.getElementById('statsRow').style.display = 'block';
+
+  const sections = [
+    buildSimplified(data),
+    buildKeyConcepts(data),
+    buildTerms(data),
+    buildAnalogy(data),
+    buildSteps(data),
+    buildExample(data),
+    buildMistakes(data),
+    buildExamSummary(data),
+    buildQuestions(data),
+  ];
+
+  grid.innerHTML = sections.join('');
+  document.getElementById('resultsContainer').style.display = 'flex';
+  document.getElementById('resultsContainer').style.flexDirection = 'column';
+  document.getElementById('outputTabs').style.display = 'flex';
+
+  switchTab('all');
+  document.querySelector('.output-area').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function secCard(idx, accClass, icon, title, countBadge, bodyHtml, rawText) {
+  const escText = (rawText||'').replace(/'/g, "\\'").replace(/\n/g,'\\n');
+  return `
+  <div class="sec-card ${accClass}" onclick="toggleSec(this)">
+    <div class="sec-header">
+      <div class="sec-icon-wrap">${icon}</div>
+      <div class="sec-title">${title}</div>
+      ${countBadge ? `<span class="sec-count">${countBadge}</span>` : ''}
+      <button class="sec-copy" onclick="copySec(this, '${escText}')">⎘ Copy</button>
+      <span class="sec-chevron">▾</span>
+    </div>
+    <div class="sec-body">${bodyHtml}</div>
+  </div>`;
+}
+
+function buildSimplified(d) {
+  const html = `<p class="explanation-text">${esc(d.simplified_explanation)}</p>`;
+  return secCard(0,'acc-blue','💡','Simplified Explanation','',html,d.simplified_explanation);
+}
+
+function buildKeyConcepts(d) {
+  const items = (d.key_concepts||[]);
+  const chips = items.map(c=>`<span class="chip">${esc(c)}</span>`).join('');
+  const html = `<div class="chips">${chips}</div>`;
+  return secCard(1,'acc-purple','🔑','Key Concepts',items.length,html,items.join('\n'));
+}
+
+function buildTerms(d) {
+  const items = (d.important_terms||[]);
+  const rows = items.map(t=>`
+    <tr>
+      <td class="term-name-cell">${esc(t.term)}</td>
+      <td class="term-def-cell">${esc(t.definition)}</td>
+    </tr>`).join('');
+  const html = `
+    <table class="terms-table">
+      <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  const raw = items.map(t=>t.term+': '+t.definition).join('\n');
+  return secCard(2,'acc-teal','📖','Important Terms',items.length,html,raw);
+}
+
+function buildAnalogy(d) {
+  const html = `<div class="analogy-block">${esc(d.real_world_analogy)}</div>`;
+  return secCard(3,'acc-orange','🌍','Real-World Analogy','',html,d.real_world_analogy);
+}
+
+function buildSteps(d) {
+  const items = (d.step_by_step||[]);
+  const html = `<ol class="steps-list">${
+    items.map((s,i)=>`
+      <li class="step-item">
+        <div class="step-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="step-text">${esc(s)}</div>
+      </li>`).join('')
+  }</ol>`;
+  const raw = items.map((s,i)=>`${i+1}. ${s}`).join('\n');
+  return secCard(4,'acc-green','📋','Step-by-Step Understanding',items.length+' steps',html,raw);
+}
+
+function buildExample(d) {
+  const html = `<div class="example-block"><span class="example-lang">EXAMPLE</span>${esc(d.example)}</div>`;
+  return secCard(5,'acc-cyan','💻','Example','',html,d.example);
+}
+
+function buildMistakes(d) {
+  const items = (d.common_mistakes||[]);
+  const html = items.map(m=>`
+    <div class="mistake-row">
+      <span class="mistake-x">✕</span>
+      <span class="mistake-text">${esc(m)}</span>
+    </div>`).join('');
+  const raw = items.map(m=>'✕ '+m).join('\n');
+  return secCard(6,'acc-red','⚠️','Common Mistakes',items.length,html,raw);
+}
+
+function buildExamSummary(d) {
+  const html = `<div class="exam-block">${esc(d.exam_ready_summary)}</div>`;
+  return secCard(7,'acc-indigo','🎯','Exam-Ready Summary','',html,d.exam_ready_summary);
+}
+
+function buildQuestions(d) {
+  const items = (d.practice_questions||[]);
+  const html = items.map((q,i)=>`
+    <div class="q-card">
+      <div class="q-top">
+        <span class="q-num-badge">Q${i+1}</span>
+        <div class="q-text">${esc(q.question)}</div>
+      </div>
+      <div class="q-meta">
+        <span class="diff-pill diff-${q.difficulty}">${esc(q.difficulty)}</span>
+        <button class="reveal-btn" onclick="revealAnswer(this)">▼ Answer</button>
+      </div>
+      <div class="q-answer">
+        <div class="answer-label">Answer</div>
+        ${esc(q.answer)}
+      </div>
+    </div>`).join('');
+  const raw = items.map((q,i)=>`Q${i+1}: ${q.question}\nAnswer: ${q.answer}`).join('\n\n');
+  return secCard(8,'acc-pink','📝','Practice Questions','5 questions',html,raw);
+}
+
+// ── IBM watsonx.ai CALL (via local server) ──
+async function callBobAI(student_level, learning_goal, subject, topic, content) {
+  const resp = await fetch('/api/simplify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      student_level, learning_goal, subject, topic, content,
+      api_key: BOB_API_KEY
+    })
+  });
+
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(data.error || `Server error ${resp.status}`);
+  return data;
+}
+
+// ── MAIN HANDLER ──
+async function handleSimplify() {
+  clearError();
+
+  if (!BOB_API_KEY) {
+    document.getElementById('apiKeyBanner').classList.remove('hidden');
+    showError('Please enter your IBM watsonx API key first.');
+    return;
+  }
+
+  const student_level = document.getElementById('student_level').value;
+  const learning_goal = document.getElementById('learning_goal').value;
+  const subject       = document.getElementById('subject').value.trim();
+  const topic         = document.getElementById('topic').value.trim();
+  const content       = document.getElementById('content').value.trim();
+
+  if (!student_level) { showError('Select a proficiency level.'); return; }
+  if (!learning_goal) { showError('Select a learning goal.'); return; }
+  if (!subject)       { showError('Enter the subject.'); return; }
+  if (!topic)         { showError('Enter the topic.'); return; }
+  if (!content)       { showError('Paste the academic content.'); return; }
+
+  setLoading(true);
+
+  try {
+    const result = await callBobAI(student_level, learning_goal, subject, topic, content);
+    renderOutput(result);
+    showToast('Content generated successfully ✓');
+  } catch (err) {
+    setLoading(false);
+    document.getElementById('emptyState').style.display = 'flex';
+    const msg = err.message || 'Unknown error';
+    if (msg.toLowerCase().includes('network') || msg.includes('fetch')) {
+      showError('Cannot reach the server. Run: npm start');
+    } else if (msg.toLowerCase().includes('api key') || msg.includes('401') || msg.includes('403')) {
+      showError('Invalid API key. Click "API Key" in the top right to update it.');
+    } else if (msg.toLowerCase().includes('quota') || msg.includes('429')) {
+      showError('Quota exceeded. Please wait a moment and try again.');
+    } else {
+      showError('Error: ' + msg);
+    }
+    return;
+  }
+
+  setLoading(false);
+}
+</script>
+</body>
+</html>
